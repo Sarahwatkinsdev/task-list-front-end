@@ -1,5 +1,6 @@
 import React from 'react';
 import TaskList from './components/TaskList.js';
+import TaskForm from './components/TaskForm.js';
 import './App.css';
 import axios from 'axios';
 
@@ -35,8 +36,6 @@ const App = () => {
         const updatedTasks = prevTasks.map(task => {
           // return task.id === id ? {...task, isComplete: !task.isComplete} :task;
           return task.id === id ? resp.data.task : task;
-
-
         });
 
         return updatedTasks;
@@ -58,6 +57,7 @@ const App = () => {
         <h1>Ada&apos;s Task List</h1>
       </header>
       <main>
+        <TaskForm/>
         <div>{<TaskList tasks={tasks} toggleComplete={toggleComplete} deleteTask={deleteTask}/>}</div>
       </main>
     </div>
