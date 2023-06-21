@@ -1,6 +1,7 @@
 import React from 'react';
 import TaskList from './components/TaskList.js';
 import './App.css';
+import axios from 'axios';
 
 const TASKS = [
   {
@@ -15,23 +16,39 @@ const TASKS = [
   },
 ];
 
-
-
 const App = () => {
   const [tasks, setTasks] = React.useState(TASKS);
 
-  const toggleComplete = (id) => {
-    setTasks(prevTasks => {
-      const updatedTasks = prevTasks.map(task => {
-        return task.id === id ? {...task, isComplete: !task.isComplete}:task;
+  React.useEffect( () => {
+    axios.get('http://127.0.0.1:5000/tasks').then(resp => {
+      setTasks(resp.data);
+    });
+  }, []); 
+
+  const toggleComplete = (id, isComplete) => {
+    console.log(isComplete)
+    const mark = isComplete ? 'mark_incomplete' : 'mark_complete'
+
+    axios.patch(`http://127.0.0.1:5000/tasks/${id}/${mark}`).then(resp => {
+      console.log(resp.data)
+      setTasks(prevTasks => {
+        const updatedTasks = prevTasks.map(task => {
+          // return task.id === id ? {...task, isComplete: !task.isComplete} :task;
+          return task.id === id ? resp.data.task : task;
+
+
+        });
+
+        return updatedTasks;
       });
-      return updatedTasks;
     });
   };
   const deleteTask = (id) => {
-    setTasks(prevTasks => {
-      const updatedTasks = prevTasks.filter(task => task.id !== id)
-      return updatedTasks;
+    axios.delete(`http://127.0.0.1:5000/tasks/${id}`).then( () => {
+      setTasks(prevTasks => {
+        const updatedTasks = prevTasks.filter(task => task.id !== id);
+        return updatedTasks;
+      });
     });
   };
 
